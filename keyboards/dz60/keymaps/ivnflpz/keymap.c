@@ -1,40 +1,4 @@
-#include QMK_KEYBOARD_H
-
-#define ______ KC_NO
-#define VS_TGL LCTL(KC_GRV)
-
-enum layers {
-  _WINDOWS,
-  _MAC,
-  _FN,
-  _MOUSE,
-  _NAV,
-  _RGB
-};
-
-int current_default_layer = _WINDOWS;
-
-enum custom_keycodes {
-  DLT_LN = SAFE_RANGE, // delete line
-  VS_CMD,   // VS Code cmd line
-  HL_WD,    // highlight word
-  HL_NWD,   // highlight next word
-  CP_LN,    // copy line
-  CT_LN,    // cut line
-  PT_LN,     // paste line
-  WINDOWS_LY,
-  MAC_LY,
-  W_LEFT,
-  W_UP,
-  W_DOWN,
-  W_RIGHT,
-  W_MIN,
-  W_MAX
-};
-
-#define RGB_STATIC_MODE rgblight_mode(RGBLIGHT_MODE_STATIC_LIGHT)
-#define RGB_BL_LIGHT   rgblight_setrgb(RGB_RED)   //rgb light for BL layer
-#define RGB_FL_LIGHT   rgblight_setrgb(RGB_BLUE)      //rgb light for FL layer
+#include "keymap.h"
 
   /* Layout
    * ,-----------------------------------------------------------------------------------------.
@@ -137,22 +101,22 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
   /* Layout
    * ,-----------------------------------------------------------------------------------------.
-   * |     |     |     |     |     |     |     |     |     |     |    |     |     |            |
+   * |     |     |     |     |     |     |     |     |     |     |    |     |     |   Close    |
    * |-----------------------------------------------------------------------------------------+
    * |        |     |     |     |     |     |     |     |     |     |     |      |      |      |
    * |-----------------------------------------------------------------------------------------+
    * |         |     |     |     |     |     |     |     |     |     |     |     |             |
    * |-----------------------------------------------------------------------------------------+
-   * |           |     |     |     |     |     |     |     |     |     |     |W_MIN|W_UP |W_MAX|
+   * |           |     |     |     |     |     |     |     |     |     |     |     |W_UP |     |
    * |-----------------------------------------------------------------------------------------+
    * |      |       |       |                                     |       |W_LFT |W_DWN |W_RGT |
    * `-----------------------------------------------------------------------------------------'
    */
   [_NAV] = LAYOUT_60_ansi_split_space_split_rshift(
-    ______,   ______,  ______,  ______,  ______,  ______,  ______,  ______,  ______,  ______,  ______,   ______,   ______,  ______,
+    TSK_MGR,   ______,  ______,  ______,  ______,  ______,  ______,  ______,  ______,  ______,  ______,   ______,   ______,  W_CLOSE,
     KC_TRNS,  ______,   ______,  ______,   ______,  ______,  ______,  ______,  ______,  ______,  ______,   ______,   ______,  ______,
     KC_TRNS,  ______,  ______,  ______,  ______,  ______,  ______,  ______,  ______,  ______,  ______,   ______,      ______,
-    KC_TRNS,  ______,   ______,   ______,   ______,   ______,  ______,  ______,  ______, ______, ______,  W_MIN, W_UP, W_MAX,
+    KC_TRNS,  ______,   ______,   ______,   ______,   ______,  ______,  ______,  ______, ______, ______,  ______, W_UP, ______,
     KC_TRNS,  KC_TRNS,  KC_TRNS,             ______, KC_TRNS,  ______                                 ,KC_TRNS,   W_LEFT , W_DOWN,   W_RIGHT
   ),
 
@@ -170,7 +134,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
    * `-----------------------------------------------------------------------------------------'
    */
   [_RGB] = LAYOUT_60_ansi_split_space_split_rshift(
-    ______,   ______,  RGB_M_P,  RGB_M_B,  RGB_M_R,  RGB_M_SW,  RGB_M_SN,  RGB_M_K,  RGB_M_G,  ______,  ______,   ______,   ______,  ______,
+    ______,   ______,  ______,  ______,  ______,  ______,  ______,  ______,  ______,  ______,  ______,   ______,   ______,  ______,
     KC_TRNS,  RGB_TOG,   RGB_MOD,  RGB_RMOD,   RGB_HUI,  RGB_HUD,  RGB_VAI,  RGB_VAD,  ______,  ______,  ______,   ______,   ______,  ______,
     KC_TRNS,  ______,  ______,  ______,  ______,  ______,  ______,  ______,  ______,  ______,  ______,   ______,      ______,
     KC_TRNS,  ______,   ______,   ______,   ______,   ______,  ______,  ______,  ______, ______, ______,  ______,______,______,
@@ -186,19 +150,32 @@ void highlight_line(bool includeWhitespace) {
   SEND_STRING(SS_UP(X_LSHIFT));
 }
 
-#define WINDOW_NAV(string) window_nav(PSTR(SS_TAP(string)))
-
 void window_nav(const char* dir) {
     if (biton32(default_layer_state) == _WINDOWS) {
         SEND_STRING(SS_DOWN(X_LGUI));
         send_string_P(dir);
         SEND_STRING(SS_UP(X_LGUI));
-    }
-    else if (biton32(default_layer_state) == _MAC) {
+    } else if (biton32(default_layer_state) == _MAC) {
         SEND_STRING(SS_DOWN(X_LGUI) SS_DOWN(X_LALT));
         send_string_P(dir);
         SEND_STRING(SS_UP(X_LGUI) SS_UP(X_LALT));
     }
+}
+
+void process_os_cmd(const char* windows_cmd, const char* mac_cmd) {
+    if (biton32(default_layer_state) == _WINDOWS) {
+        send_string_P(windows_cmd);
+    } else if (biton32(default_layer_state) == _MAC) {
+        send_string_P(mac_cmd);
+    }
+}
+
+void close_window() {
+    PROCESS_OS_CMD(SS_LALT(SS_TAP(X_F4)), SS_LCMD(SS_TAP(X_W)));
+}
+
+void open_task_manager() {
+    PROCESS_OS_CMD(SS_LCTRL(SS_LSFT(SS_TAP(X_ESCAPE))), SS_LCMD(SS_LALT(SS_TAP(X_ESCAPE))));
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
@@ -250,6 +227,12 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             return false;
         case W_DOWN:
             WINDOW_NAV(X_DOWN);
+            return false;
+        case W_CLOSE:
+            close_window();
+            return false;
+        case TSK_MGR:
+            open_task_manager();
             return false;
     }
   }
