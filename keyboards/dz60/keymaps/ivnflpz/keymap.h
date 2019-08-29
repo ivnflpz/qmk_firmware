@@ -8,8 +8,7 @@ enum layers {
   _MAC,
   _FN,
   _MOUSE,
-  _NAV,
-  _RGB
+  _NAV
 };
 
 enum custom_keycodes {

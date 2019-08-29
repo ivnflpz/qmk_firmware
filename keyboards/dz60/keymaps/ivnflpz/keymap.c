@@ -25,7 +25,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
    * |-----------------------------------------------------------------------------------------+
    * | Shift     |  Z  |  X  |  C  |  V  |  B  |  N  |  M  |  ,  |  .  |  /  | DEL |Shift|PSCRN|
    * |-----------------------------------------------------------------------------------------+
-   * | Ctrl |  GUI  |  Alt  |      Space   | Mouse   | Space    | CAPS |  RGB  |  APP  | RCtrl |
+   * | Ctrl |  GUI  |  Alt  |      Space   | Mouse   | Space    | NAV |  CAPS  |  APP  | RCtrl |
    * `-----------------------------------------------------------------------------------------'
    */
   [_WINDOWS] = LAYOUT_60_ansi_split_space_split_rshift(
@@ -33,7 +33,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_TAB,   KC_Q,     KC_W,   KC_E,   KC_R,   KC_T,   KC_Y,   KC_U,   KC_I,     KC_O,     KC_P,     KC_LBRC,  KC_RBRC,  KC_BSLS,
     MO(_FN),  KC_A,     KC_S,   KC_D,   KC_F,   KC_G,   KC_H,   KC_J,   KC_K,     KC_L,     KC_SCLN,  KC_QUOT,      KC_ENT,
     KC_LSPO,  KC_Z,     KC_X,   KC_C,   KC_V,   KC_B,   KC_N,   KC_M,   KC_COMM,  KC_DOT,   KC_SLSH,  KC_DEL,   KC_RSFT,     KC_PSCR,
-    KC_LCTL,  KC_LGUI,  KC_LALT,        KC_SPC, MO(_MOUSE), KC_SPC                         ,MO(_NAV),  MO(_RGB), KC_APP,   KC_RCTL
+    KC_LCTL,  KC_LGUI,  KC_LALT,        KC_SPC, MO(_MOUSE), KC_SPC                         ,MO(_NAV),  KC_CAPS, KC_APP,   KC_RCTL
   ),
 
   /* MAC QWERTY
@@ -54,7 +54,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_TAB,   KC_Q,     KC_W,   KC_E,   KC_R,   KC_T,   KC_Y,   KC_U,   KC_I,     KC_O,     KC_P,     KC_LBRC,  KC_RBRC,  KC_BSLS,
     MO(_FN),  KC_A,     KC_S,   KC_D,   KC_F,   KC_G,   KC_H,   KC_J,   KC_K,     KC_L,     KC_SCLN,  KC_QUOT,      KC_ENT,
     KC_LSPO,  KC_Z,     KC_X,   KC_C,   KC_V,   KC_B,   KC_N,   KC_M,   KC_COMM,  KC_DOT,   KC_SLSH,  KC_DEL,   KC_RSFT,     KC_PSCR,
-    KC_LCMD,  KC_LALT,  KC_LCTL,        KC_SPC, MO(_MOUSE), KC_SPC                         ,MO(_NAV),  MO(_RGB), KC_APP,   KC_RCTL
+    KC_LCMD,  KC_LALT,  KC_LCTL,        KC_SPC, MO(_MOUSE), KC_SPC                         ,MO(_NAV),  KC_CAPS, KC_APP,   KC_RCTL
   ),
 
   /* FN Layer
@@ -118,27 +118,6 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_TRNS,  ______,  ______,  ______,  ______,  ______,  ______,  ______,  ______,  ______,  ______,   ______,      ______,
     KC_TRNS,  ______,   ______,   ______,   ______,   ______,  ______,  ______,  ______, ______, ______,  SCRN_LEFT, W_UP, SCRN_RGHT,
     KC_TRNS,  KC_TRNS,  KC_TRNS,             ______, KC_TRNS,  ______                         ,KC_TRNS,   W_LEFT , W_DOWN,   W_RIGHT
-  ),
-
-  /* RGB Layer
-   * ,-----------------------------------------------------------------------------------------.
-   * | Esc |  F1 |  F2 |  F3 |  F4 |  F5 |  F6 |  F7 |  F8 |  F9 | F10 | F11 | F12 |    DEL    |
-   * |-----------------------------------------------------------------------------------------+
-   * | Tab    |     |     |     |RESET|     |     |     |HOME |     |     |      |      |      |
-   * |-----------------------------------------------------------------------------------------+
-   * | Caps    |     |     |     |PGDN |     |LEFT |DOWN | UP  |RIGHT| INS |     |             |
-   * |-----------------------------------------------------------------------------------------+
-   * | Shift     |     |     |     |     |PGUP |END  |     |     |     |     |     |     |     |
-   * |-----------------------------------------------------------------------------------------+
-   * | Ctrl |  Cmd  |  Alt  |                                         |      |     |     |     |
-   * `-----------------------------------------------------------------------------------------'
-   */
-  [_RGB] = LAYOUT_60_ansi_split_space_split_rshift(
-    ______,   ______,  ______,  ______,  ______,  ______,  ______,  ______,  ______,  ______,  ______,   ______,   ______,  ______,
-    KC_TRNS,  RGB_TOG,   RGB_MOD,  RGB_RMOD,   RGB_HUI,  RGB_HUD,  RGB_VAI,  RGB_VAD,  ______,  ______,  ______,   ______,   ______,  ______,
-    KC_TRNS,  ______,  ______,  ______,  ______,  ______,  ______,  ______,  ______,  ______,  ______,   ______,      ______,
-    KC_TRNS,  ______,   ______,   ______,   ______,   ______,  ______,  ______,  ______, ______, ______,  ______,______,______,
-    KC_TRNS,  KC_TRNS,  KC_TRNS,             ______, KC_TRNS,  ______                                 ,______,   ______ , ______,   KC_TRNS
   )
 };
 
