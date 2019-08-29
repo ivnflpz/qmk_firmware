@@ -61,9 +61,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
    * ,-----------------------------------------------------------------------------------------.
    * | Esc |  F1 |  F2 |  F3 |  F4 |  F5 |  F6 |  F7 |  F8 |  F9 | F10 | F11 | F12 |    DEL    |
    * |-----------------------------------------------------------------------------------------+
-   * | Tab    | DEL |     |HL_WD|HL_NWD|     |     |     |HOME |     |     |      |      |RESET|
+   * | Tab    |     |     |HL_WD|HL_NWD|     |     |     |HOME |     |     |      |      |     |
    * |-----------------------------------------------------------------------------------------+
-   * | Caps   |VS_TGL|     |DL_LN|PGDN |     |LEFT |DOWN | UP  |RIGHT| INS |     |             |
+   * | Caps   |VS_TGL|     |DL_LN|PGDN |     |LEFT |DOWN | UP  |RIGHT| INS |     |     RESET   |
    * |-----------------------------------------------------------------------------------------+
    * | Shift    |VS_CMD|CT_LN|CP_LN|PT_LN|PGUP |END  |     |     |     |     |          |
    * |-----------------------------------------------------------------------------------------+
@@ -72,8 +72,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
    */
   [_FN] = LAYOUT_60_ansi_split_space_split_rshift(
     KC_GRV,  KC_F1,  KC_F2,  KC_F3,  KC_F4,    KC_F5,    KC_F6,    KC_F7,    KC_F8,    KC_F9,    KC_F10,   KC_F11,   KC_F12,  KC_DEL,
-    KC_TRNS, ______, ______, HL_WD,  HL_NWD,   ______,   ______,   ______,   KC_HOME,  ______,   ______,  ______,   ______,  RESET,
-    KC_TRNS, VS_TGL, ______, DLT_LN, KC_PGDN,  ______,   KC_LEFT,  KC_DOWN,  KC_UP,    KC_RGHT,  KC_INS,   ______,      ______,
+    KC_TRNS, ______, ______, HL_WD,  HL_NWD,   ______,   ______,   ______,   KC_HOME,  ______,   ______,  ______,   ______,  ______,
+    KC_TRNS, VS_TGL, ______, DLT_LN, KC_PGDN,  ______,   KC_LEFT,  KC_DOWN,  KC_UP,    KC_RGHT,  KC_INS,   ______,      RESET,
     KC_TRNS, VS_CMD, CT_LN,  CP_LN,  PT_LN,    KC_PGUP,  KC_END,   ______,   ______,   ______,   ______,  ______,______,______,
     KC_TRNS, KC_TRNS, KC_TRNS,                           ______, KC_TRNS,  ______                     ,WINDOWS_LY,   MAC_LY , ______,   KC_TRNS
   ),
@@ -116,8 +116,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     TSK_MGR,   ______,  ______,  ______,  ______,  ______,  ______,  ______,  ______,  ______,  ______,   ______,   ______,  W_CLOSE,
     KC_TRNS,  ______,   ______,  ______,   ______,  ______,  ______,  ______,  ______,  ______,  ______,   ______,   ______,  ______,
     KC_TRNS,  ______,  ______,  ______,  ______,  ______,  ______,  ______,  ______,  ______,  ______,   ______,      ______,
-    KC_TRNS,  ______,   ______,   ______,   ______,   ______,  ______,  ______,  ______, ______, ______,  ______, W_UP, ______,
-    KC_TRNS,  KC_TRNS,  KC_TRNS,             ______, KC_TRNS,  ______                                 ,KC_TRNS,   W_LEFT , W_DOWN,   W_RIGHT
+    KC_TRNS,  ______,   ______,   ______,   ______,   ______,  ______,  ______,  ______, ______, ______,  SCRN_LEFT, W_UP, SCRN_RGHT,
+    KC_TRNS,  KC_TRNS,  KC_TRNS,             ______, KC_TRNS,  ______                         ,KC_TRNS,   W_LEFT , W_DOWN,   W_RIGHT
   ),
 
   /* RGB Layer
@@ -178,6 +178,20 @@ void open_task_manager() {
     PROCESS_OS_CMD(SS_LCTRL(SS_LSFT(SS_TAP(X_ESCAPE))), SS_LCMD(SS_LALT(SS_TAP(X_ESCAPE))));
 }
 
+void highlight_word() {
+    PROCESS_OS_CMD(
+        SS_LCTRL(SS_TAP(X_LEFT)) SS_LSFT(SS_LCTRL(SS_TAP(X_RIGHT))),
+        SS_LALT(SS_TAP(X_LEFT)) SS_LSFT(SS_LALT(SS_TAP(X_RIGHT)))
+    );
+}
+
+void highlight_next_word() {
+    PROCESS_OS_CMD(
+        SS_LSFT(SS_LCTRL(SS_TAP(X_RIGHT))),
+        SS_LSFT(SS_LALT(SS_TAP(X_RIGHT)))
+    );
+}
+
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   if (record->event.pressed) {
     switch (keycode) {
@@ -186,25 +200,24 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             SEND_STRING(SS_TAP(X_BSPACE) SS_TAP(X_BSPACE));
             return false;
         case VS_CMD:
-            SEND_STRING(SS_DOWN(X_LSHIFT) SS_LCTRL("`") SS_UP(X_LSHIFT));
+            PROCESS_OS_CMD(SS_LSFT(SS_LCTRL("`")), "");
             return false;
         case HL_WD:
-            SEND_STRING(SS_LCTRL(SS_TAP(X_LEFT)));
-            SEND_STRING(SS_DOWN(X_LSHIFT) SS_LCTRL(SS_TAP(X_RIGHT)) SS_UP(X_LSHIFT));
+            highlight_word();
             return false;
         case HL_NWD:
-            SEND_STRING(SS_DOWN(X_LSHIFT) SS_LCTRL(SS_TAP(X_RIGHT)) SS_UP(X_LSHIFT));
+            highlight_next_word();
             return false;
         case CP_LN:
             highlight_line(false);
-            SEND_STRING(SS_LCTRL("c") SS_TAP(X_END));
+            PROCESS_OS_CMD(SS_LCTRL("c") SS_TAP(X_END), SS_LCMD("c") SS_TAP(X_END));
             return false;
         case CT_LN:
             highlight_line(false);
-            SEND_STRING(SS_LCTRL("x"));
+            PROCESS_OS_CMD(SS_LCTRL("x"), SS_LCMD("x"));
             return false;
         case PT_LN:
-            SEND_STRING(SS_LCTRL("v"));
+            PROCESS_OS_CMD(SS_LCTRL("v"), SS_LCMD("v"));
             return false;
         case WINDOWS_LY:
             set_single_persistent_default_layer(_WINDOWS);
@@ -230,6 +243,12 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             return false;
         case W_CLOSE:
             close_window();
+            return false;
+        case SCRN_LEFT:
+            PROCESS_OS_CMD("", SS_LCTRL(SS_TAP(X_LEFT)));
+            return false;
+        case SCRN_RGHT:
+            PROCESS_OS_CMD("", SS_LCTRL(SS_TAP(X_RIGHT)));
             return false;
         case TSK_MGR:
             open_task_manager();
