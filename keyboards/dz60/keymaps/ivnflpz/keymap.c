@@ -31,7 +31,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [_WINDOWS] = LAYOUT_60_ansi_split_space_split_rshift(
     KC_GESC,  KC_1,     KC_2,   KC_3,   KC_4,   KC_5,   KC_6,   KC_7,   KC_8,     KC_9,     KC_0,     KC_MINS,  KC_EQL,   KC_BSPC,
     KC_TAB,   KC_Q,     KC_W,   KC_E,   KC_R,   KC_T,   KC_Y,   KC_U,   KC_I,     KC_O,     KC_P,     KC_LBRC,  KC_RBRC,  KC_BSLS,
-    MO(_FN),  KC_A,     KC_S,   KC_D,   KC_F,   KC_G,   KC_H,   KC_J,   KC_K,     KC_L,     KC_SCLN,  KC_QUOT,      KC_ENT,
+    TT(_FN),  KC_A,     KC_S,   KC_D,   KC_F,   KC_G,   KC_H,   KC_J,   KC_K,     KC_L,     KC_SCLN,  KC_QUOT,      KC_ENT,
     KC_LSPO,  KC_Z,     KC_X,   KC_C,   KC_V,   KC_B,   KC_N,   KC_M,   KC_COMM,  KC_DOT,   KC_SLSH,  KC_DEL,   KC_RSFT,     KC_PSCR,
     KC_LCTL,  KC_LGUI,  KC_LALT,        KC_SPC, MO(_MOUSE), KC_SPC                         ,MO(_NAV),  KC_CAPS, KC_APP,   KC_RCTL
   ),
@@ -52,9 +52,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [_MAC] = LAYOUT_60_ansi_split_space_split_rshift(
     KC_GESC,  KC_1,     KC_2,   KC_3,   KC_4,   KC_5,   KC_6,   KC_7,   KC_8,     KC_9,     KC_0,     KC_MINS,  KC_EQL,   KC_BSPC,
     KC_TAB,   KC_Q,     KC_W,   KC_E,   KC_R,   KC_T,   KC_Y,   KC_U,   KC_I,     KC_O,     KC_P,     KC_LBRC,  KC_RBRC,  KC_BSLS,
-    MO(_FN),  KC_A,     KC_S,   KC_D,   KC_F,   KC_G,   KC_H,   KC_J,   KC_K,     KC_L,     KC_SCLN,  KC_QUOT,      KC_ENT,
+    TT(_FN),  KC_A,     KC_S,   KC_D,   KC_F,   KC_G,   KC_H,   KC_J,   KC_K,     KC_L,     KC_SCLN,  KC_QUOT,      KC_ENT,
     KC_LSPO,  KC_Z,     KC_X,   KC_C,   KC_V,   KC_B,   KC_N,   KC_M,   KC_COMM,  KC_DOT,   KC_SLSH,  KC_DEL,   KC_RSFT,     KC_PSCR,
-    KC_LCMD,  KC_LALT,  KC_LCTL,        KC_SPC, MO(_MOUSE), KC_SPC                         ,MO(_NAV),  KC_CAPS, KC_APP,   KC_RCTL
+    KC_LCMD,  KC_LALT,  KC_LCTL,        KC_SPC, MO(_MOUSE), KC_SPC                         ,MO(_NAV),  KC_CAPS, KC_APP,   KC_RCMD
   ),
 
   /* FN Layer
@@ -115,7 +115,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [_NAV] = LAYOUT_60_ansi_split_space_split_rshift(
     TSK_MGR,   ______,  ______,  ______,  ______,  ______,  ______,  ______,  ______,  ______,  ______,   ______,   ______,  W_CLOSE,
     KC_TRNS,  ______,   ______,  ______,   ______,  ______,  ______,  ______,  ______,  ______,  ______,   ______,   ______,  ______,
-    KC_TRNS,  ______,  ______,  ______,  ______,  ______,  ______,  ______,  ______,  ______,  ______,   ______,      ______,
+    KC_TRNS,  ______,  ______,  ______,  ______,  ______,  ______,  ______,  ______,  ______,  ______,   ______,      W_FULL,
     KC_TRNS,  ______,   ______,   ______,   ______,   ______,  ______,  ______,  ______, ______, ______,  SCRN_LEFT, W_UP, SCRN_RGHT,
     KC_TRNS,  KC_TRNS,  KC_TRNS,             ______, KC_TRNS,  ______                         ,KC_TRNS,   W_LEFT , W_DOWN,   W_RIGHT
   )
@@ -151,6 +151,10 @@ void process_os_cmd(const char* windows_cmd, const char* mac_cmd) {
 
 void close_window() {
     PROCESS_OS_CMD(SS_LALT(SS_TAP(X_F4)), SS_LCMD(SS_TAP(X_W)));
+}
+
+void full_screen() {
+    PROCESS_OS_CMD(SS_TAP(X_F11), SS_LGUI(SS_LALT(SS_TAP(X_F))));
 }
 
 void open_task_manager() {
@@ -222,6 +226,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             return false;
         case W_CLOSE:
             close_window();
+            return false;
+        case W_FULL:
+            full_screen();
             return false;
         case SCRN_LEFT:
             PROCESS_OS_CMD("", SS_LCTRL(SS_TAP(X_LEFT)));

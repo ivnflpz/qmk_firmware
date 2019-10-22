@@ -30,6 +30,7 @@ enum custom_keycodes {
   W_DOWN,
   W_RIGHT,
   W_CLOSE,
+  W_FULL,
 
   // screen shortcuts
   SCRN_LEFT,
@@ -53,3 +54,4 @@ void process_os_cmd(const char*, const char*);
 void window_nav(const char*);
 void highlight_word(void);
 void highlight_next_word(void);
+void full_screen(void);
